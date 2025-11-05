@@ -1,5 +1,4 @@
 import org.junit.jupiter.api.Test;
-import scanner.Scanner;
 import tokenizer.Tokenizer;
 import tokenizer.TokenizerException;
 
@@ -7,7 +6,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-public class ParseTest {
+public class TokenizerTest {
 
     private final static String PROGRAM_1_PATH = "src/main/resources/program1.txt";
     private final static String PROGRAM_2_PATH = "src/main/resources/program2.txt";
