@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Test;
 import scanner.Scanner;
+import tokenizer.Tokenizer;
+import tokenizer.TokenizerException;
 
 import java.io.IOException;
 
@@ -25,8 +27,21 @@ public class ParseTest {
     }
 
     @Test
-    public void tokenizer_program1_notNull() {
+    public void tokenizerCanOpenAProgram() {
+        Tokenizer tokenizer = new Tokenizer();
+        assertDoesNotThrow(() -> tokenizer.open(PROGRAM_1_PATH));
+    }
 
+    @Test
+    public void tokenizerCanCloseAProgram() {
+        Tokenizer tokenizer = new Tokenizer();
+        try {
+            tokenizer.open(PROGRAM_1_PATH);
+        } catch (IOException | TokenizerException e) {
+            System.err.println(e.getMessage());
+            return;
+        }
+        assertDoesNotThrow(tokenizer::close);
     }
 
 
