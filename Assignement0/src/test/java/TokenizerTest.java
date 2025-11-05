@@ -36,10 +36,16 @@ public class TokenizerTest {
     }
 
     @Test
-    public void currentLexemeValueHasFirstLexemeValue(){
+    public void currentLexemeValueEqualsFirstLexemeValue(){
         var actual = tokenizer.current();
 
         assertEquals(PROGRAM_1_FIRST_LEXEME.value(), actual.value());
     }
 
+    @Test
+    public void currentLexemeTokenEqualsFirstLexemeToken(){
+        var actual = tokenizer.current();
+
+        assertEquals(PROGRAM_1_FIRST_LEXEME.token(), actual.token());
+    }
 }
