@@ -22,6 +22,7 @@ public class Tokenizer implements ITokenizer{
 
     @Override
     public void moveNext() throws IOException, TokenizerException {
+        scanner.moveNext();
         char current = scanner.current();
 
         this.current = new Lexeme(current, Token.EOF);

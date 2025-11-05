@@ -1,16 +1,20 @@
 import org.junit.jupiter.api.Test;
+import tokenizer.Lexeme;
+import tokenizer.Token;
 import tokenizer.Tokenizer;
 import tokenizer.TokenizerException;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TokenizerTest {
 
     private final static String PROGRAM_1_PATH = "src/main/resources/program1.txt";
     private final static String PROGRAM_2_PATH = "src/main/resources/program2.txt";
+
+    private final static Lexeme PROGRAM_1_FIRST_LEXEME = new Lexeme('a', Token.IDENT);
+
 
     @Test
     public void tokenizerCanOpenAProgram() {
@@ -43,6 +47,21 @@ public class TokenizerTest {
         catch (IOException e) { System.err.println(e.getMessage()); return; }
 
         assertNotNull(current);
+    }
+
+    @Test
+    public void currentLexemeValueHasFirstLexemeValue(){
+        Tokenizer tokenizer = new Tokenizer();
+
+        try { tokenizer.open(PROGRAM_1_PATH); }
+        catch (IOException | TokenizerException e) { System.err.println(e.getMessage()); return; }
+
+        var actual = tokenizer.current();
+
+        try { tokenizer.close(); }
+        catch (IOException e) { System.err.println(e.getMessage()); return; }
+
+        assertEquals(PROGRAM_1_FIRST_LEXEME.value(), actual.value());
     }
 
 }
