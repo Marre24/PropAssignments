@@ -6,20 +6,25 @@ import java.io.IOException;
 
 public class Tokenizer implements ITokenizer{
     private final Scanner scanner = new Scanner();
+    private Lexeme current = null;
 
     @Override
     public void open(String fileName) throws IOException, TokenizerException {
         scanner.open(fileName);
+
+        moveNext();
     }
 
     @Override
     public Lexeme current() {
-        return null;
+        return current;
     }
 
     @Override
     public void moveNext() throws IOException, TokenizerException {
+        char current = scanner.current();
 
+        this.current = new Lexeme(current, Token.EOF);
     }
 
     @Override

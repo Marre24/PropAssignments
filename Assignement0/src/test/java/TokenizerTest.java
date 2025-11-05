@@ -5,6 +5,7 @@ import tokenizer.TokenizerException;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TokenizerTest {
 
@@ -29,5 +30,19 @@ public class TokenizerTest {
         assertDoesNotThrow(tokenizer::close);
     }
 
+    @Test
+    public void currentLexemeIsNotNull(){
+        Tokenizer tokenizer = new Tokenizer();
+
+        try { tokenizer.open(PROGRAM_1_PATH); }
+        catch (IOException | TokenizerException e) { System.err.println(e.getMessage()); return; }
+
+        var current = tokenizer.current();
+
+        try { tokenizer.close(); }
+        catch (IOException e) { System.err.println(e.getMessage()); return; }
+
+        assertNotNull(current);
+    }
 
 }
