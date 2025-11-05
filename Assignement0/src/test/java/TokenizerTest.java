@@ -1,3 +1,5 @@
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tokenizer.Lexeme;
 import tokenizer.Token;
@@ -15,51 +17,27 @@ public class TokenizerTest {
 
     private final static Lexeme PROGRAM_1_FIRST_LEXEME = new Lexeme('a', Token.IDENT);
 
+    private Tokenizer tokenizer;
 
-    @Test
+    @BeforeEach
     public void tokenizerCanOpenAProgram() {
-        Tokenizer tokenizer = new Tokenizer();
+        tokenizer = new Tokenizer();
         assertDoesNotThrow(() -> tokenizer.open(PROGRAM_1_PATH));
     }
 
-    @Test
+    @AfterEach
     public void tokenizerCanCloseAProgram() {
-        Tokenizer tokenizer = new Tokenizer();
-        try {
-            tokenizer.open(PROGRAM_1_PATH);
-        } catch (IOException | TokenizerException e) {
-            System.err.println(e.getMessage());
-            return;
-        }
         assertDoesNotThrow(tokenizer::close);
     }
 
     @Test
     public void currentLexemeIsNotNull(){
-        Tokenizer tokenizer = new Tokenizer();
-
-        try { tokenizer.open(PROGRAM_1_PATH); }
-        catch (IOException | TokenizerException e) { System.err.println(e.getMessage()); return; }
-
-        var current = tokenizer.current();
-
-        try { tokenizer.close(); }
-        catch (IOException e) { System.err.println(e.getMessage()); return; }
-
-        assertNotNull(current);
+        assertNotNull(tokenizer.current());
     }
 
     @Test
     public void currentLexemeValueHasFirstLexemeValue(){
-        Tokenizer tokenizer = new Tokenizer();
-
-        try { tokenizer.open(PROGRAM_1_PATH); }
-        catch (IOException | TokenizerException e) { System.err.println(e.getMessage()); return; }
-
         var actual = tokenizer.current();
-
-        try { tokenizer.close(); }
-        catch (IOException e) { System.err.println(e.getMessage()); return; }
 
         assertEquals(PROGRAM_1_FIRST_LEXEME.value(), actual.value());
     }
