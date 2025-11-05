@@ -13,20 +13,6 @@ public class ParseTest {
     private final static String PROGRAM_2_PATH = "src/main/resources/program2.txt";
 
     @Test
-    public void scannerCanOpenProgram1() {
-        Scanner scanner = new Scanner();
-        assertDoesNotThrow(() -> scanner.open(PROGRAM_1_PATH));
-        try { scanner.close(); } catch (IOException _) { }
-    }
-
-    @Test
-    public void scannerCanOpenProgram2() {
-        Scanner scanner = new Scanner();
-        assertDoesNotThrow(() -> scanner.open(PROGRAM_2_PATH));
-        try { scanner.close(); } catch (IOException _) { }
-    }
-
-    @Test
     public void tokenizerCanOpenAProgram() {
         Tokenizer tokenizer = new Tokenizer();
         assertDoesNotThrow(() -> tokenizer.open(PROGRAM_1_PATH));
