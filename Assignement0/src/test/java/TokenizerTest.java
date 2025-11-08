@@ -61,7 +61,6 @@ public class TokenizerTest {
 
         while (current.value() instanceof String str && !str.equals(String.valueOf(Scanner.EOF))) {
             i++;
-            System.out.println(i + ": " + current);
             tokenizer.moveNext();
             current = tokenizer.current();
         }
@@ -99,7 +98,6 @@ public class TokenizerTest {
 
         while (current.value() instanceof String str && !str.equals(String.valueOf(Scanner.EOF))) {
             i++;
-            System.out.println("NR " + i + ": " + current.value().toString());
             tokenizer.moveNext();
             current = tokenizer.current();
         }
