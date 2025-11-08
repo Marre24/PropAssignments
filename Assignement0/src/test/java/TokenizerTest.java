@@ -14,6 +14,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TokenizerTest {
 
     private final static String[] PROGRAM_1_LEXEMES = {"a", "=", "1", "*", "2", "+", "(", "3", "-", "4", ")", "/", "5", ";"};
+    private final static String[] PROGRAM_2_LEXEMES = {
+            "{",
+            "a", "=", "1", "*", "2", "+", "(", "3", "-", "4", ")", "/", "5", ";",
+            "b", "=", "4", "-", "3", "-", "a", "+", "6", "/", "5", "/", "2", ";",
+            "c", "=", "b", "+", "a", ";",
+            "}"
+    };
+
     private final static String[] PROGRAM_3_LEXEMES = {"hej", "=", "169", "*", "42", "+", "(", "6", "-", "8", ")", "/", "8", ";"};
 
     private final static String PROGRAM_1_PATH = "src/main/resources/program1.txt";
@@ -89,6 +97,46 @@ public class TokenizerTest {
     }
 
     @Test
+    public void totalLexemesIsCorrectForMultipleLineProgram() throws TokenizerException, IOException {
+        tokenizer = new Tokenizer();
+        tokenizer.open(PROGRAM_2_PATH);
+
+        var current = tokenizer.current();
+        int i = 0;
+
+        while (current.value() instanceof String str && !str.equals(String.valueOf(Scanner.EOF))) {
+            i++;
+            tokenizer.moveNext();
+            current = tokenizer.current();
+        }
+
+        assertEquals(PROGRAM_2_LEXEMES.length, i);
+    }
+
+    @Test
+    public void lexemesIsCorrectForMultipleLineProgram() throws TokenizerException, IOException {
+        tokenizer = new Tokenizer();
+        tokenizer.open(PROGRAM_2_PATH);
+
+        var current = tokenizer.current();
+
+        StringBuilder actual = new StringBuilder();
+
+        while (current.value() instanceof String str && !str.equals(String.valueOf(Scanner.EOF))) {
+            actual.append(current.value().toString()).append(";");
+            tokenizer.moveNext();
+            current = tokenizer.current();
+        }
+
+        StringBuilder expected = new StringBuilder();
+
+        for (String s : PROGRAM_2_LEXEMES)
+            expected.append(s).append(";");
+
+        assertEquals(expected.toString(), actual.toString());
+    }
+
+    @Test
     public void totalLexemesIsCorrectForMultipleCharLexemes() throws TokenizerException, IOException {
         tokenizer = new Tokenizer();
         tokenizer.open(PROGRAM_3_PATH);
@@ -103,5 +151,28 @@ public class TokenizerTest {
         }
 
         assertEquals(PROGRAM_3_LEXEMES.length, i);
+    }
+
+    @Test
+    public void lexemesIsCorrectForMultipleCharLexemes() throws TokenizerException, IOException {
+        tokenizer = new Tokenizer();
+        tokenizer.open(PROGRAM_3_PATH);
+
+        var current = tokenizer.current();
+
+        StringBuilder actual = new StringBuilder();
+
+        while (current.value() instanceof String str && !str.equals(String.valueOf(Scanner.EOF))) {
+            actual.append(current.value().toString()).append(";");
+            tokenizer.moveNext();
+            current = tokenizer.current();
+        }
+
+        StringBuilder expected = new StringBuilder();
+
+        for (String s : PROGRAM_3_LEXEMES)
+            expected.append(s).append(";");
+
+        assertEquals(expected.toString(), actual.toString());
     }
 }
