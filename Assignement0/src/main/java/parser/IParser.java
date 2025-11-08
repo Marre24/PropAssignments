@@ -1,5 +1,6 @@
 package parser;
 
+import Nodes.INode;
 import tokenizer.TokenizerException;
 
 import java.io.IOException;

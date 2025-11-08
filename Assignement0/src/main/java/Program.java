@@ -1,4 +1,4 @@
-import parser.INode;
+import Nodes.INode;
 import parser.IParser;
 import parser.Parser;
 

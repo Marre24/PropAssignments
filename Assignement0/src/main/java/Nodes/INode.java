@@ -1,4 +1,4 @@
-package parser;
+package Nodes;
 
 public interface INode {
 	/**
