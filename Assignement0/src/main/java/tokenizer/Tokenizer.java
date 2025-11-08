@@ -4,7 +4,7 @@ import scanner.Scanner;
 
 import java.io.IOException;
 
-public class Tokenizer implements ITokenizer{
+public class Tokenizer implements ITokenizer {
     private static final char ADD_OP = '+';
     private static final char SUB_OP = '-';
     private static final char MULT_OP = '*';
@@ -17,7 +17,8 @@ public class Tokenizer implements ITokenizer{
     private static final char SEMICOLON = ';';
 
     private final Scanner scanner = new Scanner();
-    private Lexeme current = null;
+    private Lexeme currentLexeme = null;
+    private Lexeme nextLexeme = null;
 
     @Override
     public void open(String fileName) throws IOException, TokenizerException {
@@ -28,75 +29,109 @@ public class Tokenizer implements ITokenizer{
 
     @Override
     public Lexeme current() {
-        return current;
+        return currentLexeme;
     }
 
     @Override
     public void moveNext() throws IOException, TokenizerException {
-        scanner.moveNext();
-        char current = scanner.current();
 
-        while (!isValid(current)){
-            scanner.moveNext();
-            current = scanner.current();
+        if (nextLexeme == null){
+            this.currentLexeme = getNextLexeme();
+            return;
         }
 
-        Token token = Token.EOF;
-
-        switch (current){
-            case Scanner.EOF:
-                this.current = new Lexeme(String.valueOf(Scanner.EOF), token);
-                return;
-            case Scanner.NULL:
-                token = Token.NULL;
-                break;
-            case ADD_OP:
-                token = Token.ADD_OP;
-                break;
-            case SUB_OP:
-                token = Token.SUB_OP;
-                break;
-            case MULT_OP:
-                token = Token.MULT_OP;
-                break;
-            case DIV_OP:
-                token = Token.DIV_OP;
-                break;
-            case ASSIGN_OP:
-                token = Token.ASSIGN_OP;
-                break;
-            case LEFT_PAREN:
-                token = Token.LEFT_PAREN;
-                break;
-            case RIGHT_PAREN:
-                token = Token.RIGHT_PAREN;
-                break;
-            case SEMICOLON:
-                token = Token.SEMICOLON;
-                break;
-            case LEFT_CURLY:
-                token = Token.LEFT_CURLY;
-                break;
-            case RIGHT_CURLY:
-                token = Token.RIGHT_CURLY;
-                break;
-        }
-
-        if (Character.isDigit(current))
-            token = Token.INT_LIT;
-        if (Character.isAlphabetic(current))
-            token = Token.IDENT;
-
-        this.current = new Lexeme(String.valueOf(current), token);
+        this.currentLexeme = nextLexeme;
+        nextLexeme = null;
     }
 
-    private boolean isValid(char c){
+    private Lexeme getNextLexeme() throws IOException, TokenizerException {
+        
+        scanner.moveNext();
+
+        char newCurrent = getValidChar();
+        Token token = getTokenFor(newCurrent);
+
+        if (token == Token.EOF)
+            return  new Lexeme(String.valueOf(Scanner.EOF), token);
+        if (token == Token.IDENT || token == Token.INT_LIT)
+            return new Lexeme(getMultipleCharLexeme(newCurrent, token), token);
+
+        return new Lexeme(String.valueOf(newCurrent), token);
+    }
+
+    private char getValidChar() throws IOException {
+        char newCurrent = scanner.current();
+
+        while (isInvalid(newCurrent)) {
+            scanner.moveNext();
+            newCurrent = scanner.current();
+        }
+        return newCurrent;
+    }
+
+    private Token getTokenFor(char newCurrent) throws TokenizerException {
+        switch (newCurrent) {
+            case Scanner.EOF:
+                return Token.EOF;
+            case Scanner.NULL:
+                return Token.NULL;
+            case ADD_OP:
+                return  Token.ADD_OP;
+            case SUB_OP:
+                return Token.SUB_OP;
+            case MULT_OP:
+                return Token.MULT_OP;
+            case DIV_OP:
+                return Token.DIV_OP;
+            case ASSIGN_OP:
+                return Token.ASSIGN_OP;
+            case LEFT_PAREN:
+                return Token.LEFT_PAREN;
+            case RIGHT_PAREN:
+                return Token.RIGHT_PAREN;
+            case SEMICOLON:
+                return Token.SEMICOLON;
+            case LEFT_CURLY:
+                return Token.LEFT_CURLY;
+            case RIGHT_CURLY:
+                return Token.RIGHT_CURLY;
+        }
+        if (Character.isDigit(newCurrent))
+            return Token.INT_LIT;
+        if (Character.isAlphabetic(newCurrent))
+            return Token.IDENT;
+
+        throw new TokenizerException("Could not match " + newCurrent + " to any token type");
+    }
+
+    private String getMultipleCharLexeme(char c, Token token) throws IOException, TokenizerException {
+        StringBuilder builder = new StringBuilder();
+
+        while ((token == Token.INT_LIT && Character.isDigit(c))
+                || (token == Token.IDENT && Character.isAlphabetic(c))) {
+            builder.append(c);
+            scanner.moveNext();
+            c = scanner.current();
+            if (isInvalid(c))
+                break;
+
+            Token scannerCurrentToken = getTokenFor(c);
+            if (scannerCurrentToken != token){
+                nextLexeme = new Lexeme(String.valueOf(c), scannerCurrentToken);
+                break;
+            }
+        }
+
+        return builder.toString();
+    }
+
+    private boolean isInvalid(char c) {
         if (Character.isDigit(c) || Character.isAlphabetic(c))
-            return true;
+            return false;
         return switch (c) {
             case Scanner.EOF, ADD_OP, Scanner.NULL, SUB_OP, MULT_OP, DIV_OP, ASSIGN_OP, LEFT_PAREN, RIGHT_PAREN,
-                 SEMICOLON, LEFT_CURLY, RIGHT_CURLY -> true;
-            default -> false;
+                 SEMICOLON, LEFT_CURLY, RIGHT_CURLY -> false;
+            default -> true;
         };
     }
 
