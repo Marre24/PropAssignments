@@ -51,6 +51,10 @@ public class Tokenizer implements ITokenizer {
         char newCurrent = getValidChar();
         Token token = getTokenFor(newCurrent);
 
+        if (token == Token.INT_LIT && newCurrent == '0')
+            throw new TokenizerException("ints cant start with 0");
+
+
         if (token == Token.EOF)
             return  new Lexeme(String.valueOf(Scanner.EOF), token);
         if (token == Token.IDENT || token == Token.INT_LIT)

@@ -27,6 +27,7 @@ public class TokenizerTest {
     private final static String PROGRAM_1_PATH = "src/main/resources/program1.txt";
     private final static String PROGRAM_2_PATH = "src/main/resources/program2.txt";
     private final static String PROGRAM_3_PATH = "src/main/resources/program3.txt";
+    private final static String PROGRAM_4_PATH = "src/main/resources/program4.txt";
 
     private final static Lexeme PROGRAM_1_FIRST_LEXEME = new Lexeme("a", Token.IDENT);
 
@@ -174,5 +175,15 @@ public class TokenizerTest {
             expected.append(s).append(";");
 
         assertEquals(expected.toString(), actual.toString());
+    }
+
+    @Test
+    public void tokenizerExceptionThrownOnIntStartingWithZero() throws TokenizerException, IOException {
+        tokenizer = new Tokenizer();
+        tokenizer.open(PROGRAM_4_PATH);
+
+        tokenizer.moveNext();
+
+        assertThrows(TokenizerException.class, () -> tokenizer.moveNext());
     }
 }
