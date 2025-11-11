@@ -2,8 +2,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import parser.Parser;
+import parser.ParserException;
+import tokenizer.TokenizerException;
+
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ParserTest {
 
@@ -25,7 +30,12 @@ public class ParserTest {
     }
 
     @Test
-    public void parserCanParse(){
+    public void parserDonNotThrowException() {
+        assertDoesNotThrow(() -> parser.parse());
+    }
 
+    @Test
+    public void parserReturnsNotNull() throws ParserException, TokenizerException, IOException {
+        assertNotNull(parser.parse());
     }
 }

@@ -1,5 +1,6 @@
 package parser;
 
+import Nodes.BlockNode;
 import Nodes.INode;
 import tokenizer.Tokenizer;
 import tokenizer.TokenizerException;
@@ -17,7 +18,7 @@ public class Parser implements IParser {
 
     @Override
     public INode parse() throws IOException, TokenizerException, ParserException {
-        return null;
+        return new BlockNode();
     }
 
     @Override
