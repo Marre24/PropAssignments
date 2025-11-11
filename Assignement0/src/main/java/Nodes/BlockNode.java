@@ -11,7 +11,7 @@ import java.io.IOException;
 public class BlockNode implements INode{
 
     private final Lexeme leftBraces;
-    private final StatementNode statementNode;
+    private final StatementsNode statementsNode;
     private final Lexeme rightBraces;
 
     public BlockNode(Tokenizer tokenizer) throws ParserException, TokenizerException, IOException {
@@ -20,7 +20,7 @@ public class BlockNode implements INode{
         leftBraces = tokenizer.current();
         tokenizer.moveNext();
 
-        statementNode = new StatementNode(tokenizer);
+        statementsNode = new StatementsNode(tokenizer);
 
         if (tokenizer.current().token() != Token.RIGHT_CURLY)
             throw new ParserException("Lexeme: " + tokenizer.current() + " was not of type RIGHT_CURLY");
@@ -35,6 +35,11 @@ public class BlockNode implements INode{
 
     @Override
     public void buildString(StringBuilder builder, int tabs) {
+        builder.append("\t".repeat(tabs)).append("BlockNode").append("\n");
+        builder.append("\t".repeat(tabs)).append(leftBraces).append("\n");
 
+        statementsNode.buildString(builder, tabs + 1);
+
+        builder.append("\t".repeat(tabs)).append(rightBraces).append("\n");
     }
 }

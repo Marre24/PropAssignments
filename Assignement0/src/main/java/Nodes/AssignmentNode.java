@@ -8,14 +8,14 @@ import tokenizer.TokenizerException;
 
 import java.io.IOException;
 
-public class AssignNode implements INode {
+public class AssignmentNode implements INode {
 
     private final Lexeme id;
-    private final Lexeme equalsSign;
+    private final Lexeme assignmentOp;
     private final ExpressionNode expressionNode;
     private final Lexeme semiColon;
 
-    public AssignNode(Tokenizer tokenizer) throws ParserException, TokenizerException, IOException {
+    public AssignmentNode(Tokenizer tokenizer) throws ParserException, TokenizerException, IOException {
         if (tokenizer.current().token() != Token.IDENT)
             throw new ParserException("Lexeme: " + tokenizer.current() + " was not of type IDENT");
         id = tokenizer.current();
@@ -23,7 +23,7 @@ public class AssignNode implements INode {
 
         if (tokenizer.current().token() != Token.ASSIGN_OP)
             throw new ParserException("Lexeme: " + tokenizer.current() + " was not of type ASSIGN_OP");
-        equalsSign = tokenizer.current();
+        assignmentOp = tokenizer.current();
         tokenizer.moveNext();
 
         expressionNode = new ExpressionNode(tokenizer);
@@ -41,6 +41,12 @@ public class AssignNode implements INode {
 
     @Override
     public void buildString(StringBuilder builder, int tabs) {
+        builder.append("\t".repeat(tabs)).append("AssignmentNode").append("\n");
+        builder.append("\t".repeat(tabs + 1)).append(id).append("\n");
+        builder.append("\t".repeat(tabs + 1)).append(assignmentOp).append("\n");
 
+        expressionNode.buildString(builder, tabs + 1);
+
+        builder.append("\t".repeat(tabs  + 1)).append(semiColon).append("\n");
     }
 }
