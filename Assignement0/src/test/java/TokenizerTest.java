@@ -29,6 +29,7 @@ public class TokenizerTest {
     private final static String PROGRAM_3_PATH = "src/main/resources/program3.txt";
     private final static String PROGRAM_4_PATH = "src/main/resources/program4.txt";
     private final static String PROGRAM_5_PATH = "src/main/resources/program5.txt";
+    private final static String PROGRAM_6_PATH = "src/main/resources/program6.txt";
 
     private final static Lexeme PROGRAM_1_FIRST_LEXEME = new Lexeme("a", Token.IDENT);
 
@@ -211,4 +212,26 @@ public class TokenizerTest {
         assertEquals(expected.toString(), actual.toString());
     }
 
+    @Test
+    public void lexemesIsCorrectForNoSpaceProgram() throws TokenizerException, IOException {
+        tokenizer = new Tokenizer();
+        tokenizer.open(PROGRAM_6_PATH);
+
+        var current = tokenizer.current();
+
+        StringBuilder actual = new StringBuilder();
+
+        while (current.value() instanceof String str && !str.equals(String.valueOf(Scanner.EOF))) {
+            actual.append(current.value().toString()).append(";");
+            tokenizer.moveNext();
+            current = tokenizer.current();
+        }
+
+        StringBuilder expected = new StringBuilder();
+
+        for (String s : PROGRAM_1_LEXEMES)
+            expected.append(s).append(";");
+
+        assertEquals(expected.toString(), actual.toString());
+    }
 }
