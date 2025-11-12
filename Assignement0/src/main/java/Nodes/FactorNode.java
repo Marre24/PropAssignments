@@ -8,6 +8,7 @@ import tokenizer.Tokenizer;
 import tokenizer.TokenizerException;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class FactorNode implements INode {
 
@@ -48,7 +49,18 @@ public class FactorNode implements INode {
 
     @Override
     public Object evaluate(Object[] args) throws Exception {
-        return null;
+        if (identifier != null){
+            if (args[0] instanceof Map<?,?> map){
+                var hashMap = (Map<String, Double>) map;
+
+                return hashMap.getOrDefault(identifier.value().toString(), 0D);
+            }
+            return null;
+        }
+        if (integer != null)
+            return Double.parseDouble(integer.value().toString());
+
+        return expressionNode.evaluate(args);
     }
 
     @Override

@@ -30,7 +30,7 @@ public class BlockNode implements INode{
 
     @Override
     public Object evaluate(Object[] args) throws Exception {
-        return null;
+        return statementsNode.evaluate(args);
     }
 
     @Override

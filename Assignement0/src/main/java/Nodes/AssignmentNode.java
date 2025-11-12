@@ -7,6 +7,8 @@ import tokenizer.Tokenizer;
 import tokenizer.TokenizerException;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AssignmentNode implements INode {
 
@@ -36,6 +38,12 @@ public class AssignmentNode implements INode {
 
     @Override
     public Object evaluate(Object[] args) throws Exception {
+        if (args[0] instanceof Map<?,?> map){
+            var hashMap = (Map<String, Double>) map;
+            double value = (double) expressionNode.evaluate(args);
+            hashMap.put(id.value().toString(), value);
+        }
+
         return null;
     }
 

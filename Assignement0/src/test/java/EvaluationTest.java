@@ -6,13 +6,23 @@ import parser.ParserException;
 import tokenizer.TokenizerException;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static java.util.Map.entry;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EvaluationTest {
 
     private final static String PROGRAM_2_PATH = "src/main/resources/program2.txt";
     private static INode root;
+    private static final Map<String, Double> EXPECTED = Map.ofEntries(
+            entry("a", 1.8d),
+            entry("b", -0.2d),
+            entry("c", 1.6d)
+    );
+
 
     @BeforeAll
     public static void parserCanOpenProgram1() {
@@ -28,7 +38,16 @@ public class EvaluationTest {
 
     @Test
     public void evaluateDoesNotThrowException() {
-        Object[] objects = new Object[0];
-        assertDoesNotThrow(() -> root.evaluate(objects));
+        Map<String, Double> variables = new HashMap<>();
+        assertDoesNotThrow(() -> root.evaluate(new Object[]{variables}));
+    }
+
+    @Test
+    public void correctVariablesAreSaved() throws Exception {
+        Map<String, Double> actual = new HashMap<>();
+        root.evaluate(new Object[]{actual});
+        Set<String> expectedKeys = EXPECTED.keySet();
+        Set<String> actualKeys = actual.keySet();
+        assertEquals(expectedKeys, actualKeys);
     }
 }
