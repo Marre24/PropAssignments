@@ -22,10 +22,11 @@ public class StatementsNode implements INode{
 
     @Override
     public Object evaluate(Object[] args) throws Exception {
-        if (assignmentNode == null)
+        if (assignmentNode == null || statementsNode == null)
             return null;
-        statementsNode.evaluate(args);
+
         assignmentNode.evaluate(args);
+        statementsNode.evaluate(args);
         return null;
     }
 

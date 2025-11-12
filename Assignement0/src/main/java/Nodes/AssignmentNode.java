@@ -41,6 +41,9 @@ public class AssignmentNode implements INode {
         if (args[0] instanceof Map<?,?> map){
             var hashMap = (Map<String, Double>) map;
             double value = (double) expressionNode.evaluate(args);
+            value = Math.round(value * 1_000_000d) / 1_000_000d;
+            hashMap.put(id.value().toString(), value);
+
             hashMap.put(id.value().toString(), value);
         }
 

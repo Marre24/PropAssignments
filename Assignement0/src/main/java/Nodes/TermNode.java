@@ -26,24 +26,21 @@ public class TermNode implements INode {
 
     @Override
     public Object evaluate(Object[] args) throws Exception {
-        Double factorValue = null;
-        if (factorNode.evaluate(args) instanceof Double d)
-            factorValue = d;
+        double result = (Double) factorNode.evaluate(args);
 
-        if (operator == null || factorValue == null)
-            return factorValue;
+        var evaluatingTermNode = this;
 
-        Double termValue = null;
-        if (termNode.evaluate(args) instanceof Double d)
-            termValue = d;
+        while (evaluatingTermNode.operator != null) {
+            if (evaluatingTermNode.termNode.factorNode.evaluate(args) instanceof Double d){
+                if (evaluatingTermNode.operator.token() == Token.DIV_OP)
+                    result /= d;
+                else
+                    result *= d;
+            }
+            evaluatingTermNode = evaluatingTermNode.termNode;
+        }
 
-        if (termValue == null)
-            return null;
-
-        if (operator.token() == Token.DIV_OP)
-            return factorValue / termValue;
-
-        return factorValue * termValue;
+        return result;
     }
 
     @Override

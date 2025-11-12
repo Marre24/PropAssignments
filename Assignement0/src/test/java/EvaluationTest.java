@@ -50,4 +50,17 @@ public class EvaluationTest {
         Set<String> actualKeys = actual.keySet();
         assertEquals(expectedKeys, actualKeys);
     }
+
+    @Test
+    public void variablesHaveCorrectValue() throws Exception {
+        Map<String, Double> actual = new HashMap<>();
+        root.evaluate(new Object[]{actual});
+        for (var key : EXPECTED.keySet()){
+            System.out.println("Variable: " + key + " expected to be: " + EXPECTED.get(key) + " and was: " + actual.get(key));
+        }
+
+        for (var key : EXPECTED.keySet()){
+            assertEquals(EXPECTED.get(key), actual.get(key));
+        }
+    }
 }

@@ -27,24 +27,21 @@ public class ExpressionNode implements INode{
 
     @Override
     public Object evaluate(Object[] args) throws Exception {
-        Double termValue = null;
-        if (termNode.evaluate(args) instanceof Double d)
-            termValue = d;
+        double result = (Double) termNode.evaluate(args);
 
-        if (operator == null || termValue == null)
-            return termValue;
+        var evaluatingExprNode = this;
 
-        Double exprValue = null;
-        if (expressionNode.evaluate(args) instanceof Double d)
-            exprValue = d;
+        while (evaluatingExprNode.operator != null){
+            if (evaluatingExprNode.expressionNode.termNode.evaluate(args) instanceof Double d){
+                if (evaluatingExprNode.operator.token() == Token.SUB_OP)
+                    result -= d;
+                else
+                    result += d;
+            }
+            evaluatingExprNode = evaluatingExprNode.expressionNode;
+        }
 
-        if (exprValue == null)
-            return null;
-
-        if (operator.token() == Token.SUB_OP)
-            return termValue - exprValue;
-
-        return termValue + exprValue;
+        return result;
     }
 
     @Override
