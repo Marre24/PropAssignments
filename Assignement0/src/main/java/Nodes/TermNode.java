@@ -31,12 +31,11 @@ public class TermNode implements INode {
         var evaluatingTermNode = this;
 
         while (evaluatingTermNode.operator != null) {
-            if (evaluatingTermNode.termNode.factorNode.evaluate(args) instanceof Double d){
-                if (evaluatingTermNode.operator.token() == Token.DIV_OP)
-                    result /= d;
-                else
-                    result *= d;
-            }
+            double d = (double) evaluatingTermNode.termNode.factorNode.evaluate(args);
+            if (evaluatingTermNode.operator.token() == Token.DIV_OP)
+                result /= d;
+            else
+                result *= d;
             evaluatingTermNode = evaluatingTermNode.termNode;
         }
 
@@ -50,7 +49,7 @@ public class TermNode implements INode {
 
         if (operator == null)
             return;
-        builder.append("\t".repeat(tabs  + 1)).append(operator).append("\n");
+        builder.append("\t".repeat(tabs + 1)).append(operator).append("\n");
         termNode.buildString(builder, tabs + 1);
 
     }

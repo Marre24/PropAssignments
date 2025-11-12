@@ -8,7 +8,7 @@ import tokenizer.TokenizerException;
 
 import java.io.IOException;
 
-public class ExpressionNode implements INode{
+public class ExpressionNode implements INode {
 
     private final TermNode termNode;
     private Lexeme operator = null;
@@ -31,13 +31,12 @@ public class ExpressionNode implements INode{
 
         var evaluatingExprNode = this;
 
-        while (evaluatingExprNode.operator != null){
-            if (evaluatingExprNode.expressionNode.termNode.evaluate(args) instanceof Double d){
-                if (evaluatingExprNode.operator.token() == Token.SUB_OP)
-                    result -= d;
-                else
-                    result += d;
-            }
+        while (evaluatingExprNode.operator != null) {
+            double d = (double) evaluatingExprNode.expressionNode.termNode.evaluate(args);
+            if (evaluatingExprNode.operator.token() == Token.SUB_OP)
+                result -= d;
+            else
+                result += d;
             evaluatingExprNode = evaluatingExprNode.expressionNode;
         }
 
