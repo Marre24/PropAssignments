@@ -62,7 +62,3 @@ createClass = function (className, superClassList) {
 
   return c;
 };
-
-var class0 = createClass("Class 0", null);
-var class1 = createClass("Class 1", [class0]);
-class0.addSuperClass(class1);
