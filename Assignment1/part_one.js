@@ -12,7 +12,6 @@ var myObject = {
     t.call = this.call;
     t.addPrototype = this.addPrototype;
     t.hasPrototype = this.hasPrototype;
-    t.checkForPrototypeFunctions = this.checkForPrototypeFunctions;
 
     return t;
   },
