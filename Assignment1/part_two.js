@@ -3,20 +3,33 @@ const couldNotFind = "Could Not Find Method";
 createClass = function (className, superClassList) {
   if (superClassList === null || superClassList === undefined)
     superClassList = [];
-  const c = {
+
+  return {
     className: className,
     superClassList: superClassList,
 
-    new() {
+    new: function () {
       var t = {};
+
       t.__class__ = this;
-      t.call = this.call;
-      t.checkForClassMethods = this.checkForClassMethods;
+
+      t.call = function (funcName, parameters) {
+        if (typeof this[funcName] === "function")
+          return this[funcName].apply(this, parameters);
+
+        return this.__class__.checkForClassMethods(
+          this.__class__,
+          funcName,
+          parameters,
+          this
+        );
+      };
+
       return t;
     },
 
     addSuperClass: function (superClass) {
-      if (superClass.hasSuperClass(this))
+      if (superClass === this || superClass.hasSuperClass(this))
         throw Error("will result in circular class inheritance");
       this.superClassList.push(superClass);
     },
@@ -29,26 +42,21 @@ createClass = function (className, superClassList) {
       return false;
     },
 
-    call(funcName, parameters) {
-      if (typeof this[funcName] === "function")
-        return this[funcName](...parameters);
-
-      return this.checkForClassMethods(this.__class__, funcName, parameters);
-    },
-
-    checkForClassMethods(currentClass, funcName, parameters, visited = []) {
-      if (visited.includes(currentClass)) return couldNotFind;
-      visited.push(currentClass);
-
+    checkForClassMethods: function (
+      currentClass,
+      funcName,
+      parameters,
+      receiver
+    ) {
       if (typeof currentClass[funcName] === "function")
-        return currentClass[funcName](...parameters);
+        return currentClass[funcName].apply(receiver, parameters);
 
       for (const superClass of currentClass.superClassList) {
         let result = this.checkForClassMethods(
           superClass,
           funcName,
           parameters,
-          visited.slice()
+          receiver
         );
 
         if (result === couldNotFind) continue;
@@ -59,6 +67,4 @@ createClass = function (className, superClassList) {
       return couldNotFind;
     },
   };
-
-  return c;
 };
