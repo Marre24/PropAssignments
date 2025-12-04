@@ -35,9 +35,10 @@ var myObject = {
   create: function (prototypeList) {
     var t = {};
 
+    if (prototypeList === null || prototypeList === undefined)
+      prototypeList = [];
+
     t.prototypeList = prototypeList;
-    if (t.prototypeList === null || t.prototypeList === undefined)
-      t.prototypeList = [];
 
     t.create = this.create;
 
