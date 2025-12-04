@@ -1,1 +1,8 @@
 *.zip
+
+#Calva
+.clj-kondo
+.lsp
+*.transit.json
+.calva
+.cpcache
