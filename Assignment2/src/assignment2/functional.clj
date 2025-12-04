@@ -19,3 +19,26 @@
    (if (empty? list)
      (reverse result)
      (recur (rest list) func (conj result (func (first list)))))))
+
+(defn get-diff
+  ([list]
+   (if (empty? (rest list))
+     0
+     (get-diff (rest list) (first list) (first list))))
+  ([list min max]
+   (let [head (first list) tail (rest list)]
+     (if (empty? list)
+       (- max min)
+       (if (< max head)
+         (recur tail min head)
+         (if (> min head)
+           (recur tail head max)
+           (recur tail min max)))))))
+
+(defn my-checksum1
+  ([list]
+   (my-checksum1 list 0))
+  ([list sum]
+   (if (empty? list)
+     sum
+     (recur (rest list) (+ sum (get-diff (first list)))))))
