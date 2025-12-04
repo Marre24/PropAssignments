@@ -50,3 +50,13 @@
    (if (empty? list)
      sum
      (recur (rest list) check-func total-func (total-func sum (check-func (first list)))))))
+
+(defn my-reverse
+  ([list]
+   (if (list? list)
+     (my-reverse list '())
+     nil))
+  ([list reversed-list]
+   (if (empty? list)
+     reversed-list
+     (recur (rest list) (conj reversed-list (first list))))))
