@@ -4,6 +4,7 @@ import parser.Parser;
 
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
 
 public class Program {
 	public static void main(String[] args) {
@@ -29,7 +30,7 @@ public class Program {
 				builder.append("PARSE TREE:\n");
 				root.buildString(builder, 0);
 				builder.append("\nEVALUATION:\n");
-				builder.append(root.evaluate(null));
+				builder.append(root.evaluate(new Object[]{new HashMap<String, Double>()}));
 				
 				stream = new FileOutputStream(outputFileName);
 				writer = new OutputStreamWriter(stream);

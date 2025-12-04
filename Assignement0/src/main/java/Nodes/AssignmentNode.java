@@ -7,7 +7,6 @@ import tokenizer.Tokenizer;
 import tokenizer.TokenizerException;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 public class AssignmentNode implements INode {
@@ -38,7 +37,7 @@ public class AssignmentNode implements INode {
 
     @Override
     public Object evaluate(Object[] args) throws Exception {
-        if (args[0] instanceof Map<?,?> map){
+        if (args[0] instanceof Map<?, ?> map) {
             var hashMap = (Map<String, Double>) map;
             double value = (double) expressionNode.evaluate(args);
             value = Math.round(value * 1_000_000d) / 1_000_000d;
@@ -58,6 +57,6 @@ public class AssignmentNode implements INode {
 
         expressionNode.buildString(builder, tabs + 1);
 
-        builder.append("\t".repeat(tabs  + 1)).append(semiColon).append("\n");
+        builder.append("\t".repeat(tabs + 1)).append(semiColon).append("\n");
     }
 }
