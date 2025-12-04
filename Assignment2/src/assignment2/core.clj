@@ -1,4 +1,7 @@
-(ns assignment2.core)
+(ns assignment2.core
+  (:require [assignment2.functional :refer [helloWorld]]))
+
+
 
 (defn -main []
-  (println "Hello World!"))
+  (helloWorld))
