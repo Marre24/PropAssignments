@@ -42,3 +42,11 @@
    (if (empty? list)
      sum
      (recur (rest list) (+ sum (get-diff (first list)))))))
+
+(defn my-checksum2
+  ([list check-func total-func]
+   (my-checksum2 (rest list) check-func total-func (check-func (first list))))
+  ([list check-func total-func sum]
+   (if (empty? list)
+     sum
+     (recur (rest list) check-func total-func (total-func sum (check-func (first list)))))))
