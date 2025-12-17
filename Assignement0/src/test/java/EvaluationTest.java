@@ -8,20 +8,18 @@ import tokenizer.TokenizerException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import static java.util.Map.entry;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EvaluationTest {
 
     private final static String PROGRAM_2_PATH = "src/main/resources/program2.txt";
     private static INode root;
-    private static final Map<String, Double> EXPECTED = Map.ofEntries(
-            entry("a", 1.8d),
-            entry("b", -0.2d),
-            entry("c", 1.6d)
-    );
+    private static final String EXPECTED =
+            "a = 1.8\n" +
+            "b = -0.2\n" +
+            "c = 1.6\n";
 
 
     @BeforeAll
@@ -43,24 +41,8 @@ public class EvaluationTest {
     }
 
     @Test
-    public void correctVariablesAreSaved() throws Exception {
-        Map<String, Double> actual = new HashMap<>();
-        root.evaluate(new Object[]{actual});
-        Set<String> expectedKeys = EXPECTED.keySet();
-        Set<String> actualKeys = actual.keySet();
-        assertEquals(expectedKeys, actualKeys);
-    }
-
-    @Test
     public void variablesHaveCorrectValue() throws Exception {
-        Map<String, Double> actual = new HashMap<>();
-        root.evaluate(new Object[]{actual});
-        for (var key : EXPECTED.keySet()){
-            System.out.println("Variable: " + key + " expected to be: " + EXPECTED.get(key) + " and was: " + actual.get(key));
-        }
-
-        for (var key : EXPECTED.keySet()){
-            assertEquals(EXPECTED.get(key), actual.get(key));
-        }
+        String actual = (String) root.evaluate(null);
+        assertEquals(EXPECTED, actual);
     }
 }

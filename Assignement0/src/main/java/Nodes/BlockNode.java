@@ -9,7 +9,7 @@ import tokenizer.TokenizerException;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class BlockNode implements INode{
+public class BlockNode implements INode {
 
     private final Lexeme leftBraces;
     private final StatementsNode statementsNode;
@@ -33,7 +33,17 @@ public class BlockNode implements INode{
     public Object evaluate(Object[] args) throws Exception {
         if (args == null)
             args = new Object[]{new HashMap<String, Double>()};
-        return statementsNode.evaluate(args);
+
+        statementsNode.evaluate(args);
+
+        var map = (HashMap<String, Double>) args[0];
+        StringBuilder sb = new StringBuilder();
+
+        for (String var : map.keySet())
+            sb.append(var).append(" = ").append(map.get(var)).append("\n");
+
+
+        return sb.toString();
     }
 
     @Override
