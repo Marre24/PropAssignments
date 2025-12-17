@@ -1,29 +1,11 @@
-/*** 
-Load the tokenizer (tokenize/2) and the file_writer (write_to_file/3).
-***/
 :- [tokenizer].
 :- [filewriter].
 
-
-/***
-The top level predicate run/2 of the solution.
-To be called like this:
-?- run('program1.txt','myparsetree1.txt').
-run('program2.txt','myparsetree2.txt').
-***/
 run(InputFile,OutputFile):-
 	tokenize(InputFile,Program),
 	parse(ParseTree,Program,[]),
-	%evaluate(ParseTree,[],VariablesOut), 
-	write_to_file(OutputFile,ParseTree,[]).
-	
-/***
-parse(-ParseTree)-->
-	A grammar defining your programming language,
-	and returning a parse tree.
-***/
-
-/* WRITE YOUR CODE FOR THE PARSER HERE */
+	evaluate(ParseTree,[],VariablesOut), 
+	write_to_file(OutputFile,ParseTree, VariablesOut).
 
 block(BlockTree) --> ['{'] , stmts(StmtTree) , ['}'], {BlockTree = block(left_curly, StmtTree, right_curly)}.
 stmts(Value) --> {Value = statements}.
@@ -50,16 +32,54 @@ parse(ParseTree, Program, []) :-
     once(phrase(block(ParseTree), Program, [])).
 
 
+evaluate(block(left_curly, Stmts, right_curly), VariablesIn, VariablesOut) :-
+	evaluate_stmts(Stmts, VariablesIn, VariablesOut).
 
-	
-/***
-evaluate(+ParseTree,+VariablesIn,-VariablesOut):-
-	Evaluates a parse-tree and returns the state of the program
-	after evaluation as a list of variables and their values in 
-	the form [var = value, ...].
-***/
+evaluate_stmts(statements, VariablesIn, VariablesOut) :-
+	VariablesOut = VariablesIn.
+evaluate_stmts(statements(Assignment, Stmts), VariablesIn, VariablesOut) :-
+	evaluate_assign(Assignment, VariablesIn, VariablesTmp),
+	evaluate_stmts(Stmts, VariablesTmp, VariablesOut).
 
-/* WRITE YOUR CODE FOR THE EVALUATOR HERE */
+evaluate_assign(assignment(ident(V), assign_op, Expr, semicolon), VariablesIn, VariablesOut) :-
+	evaluate_expr(Expr, Value, VariablesIn),
+	VariablesOut = [V = Value | VariablesIn].
 
-/* Default implementation for grade E. Replace it for a higher grade. */
-evaluate(_ParseTree,[],[]).
+evaluate_expr(expression(Term), Value, VariablesIn) :-
+	evaluate_term(Term, Value, VariablesIn).
+evaluate_expr(expression(Term, add_op, Expr), Value, VariablesIn) :-
+	evaluate_term(Term, T, VariablesIn),
+	evaluate_expr(Expr, V, VariablesIn),
+	Value is T + V.
+evaluate_expr(expression(Term, sub_op, Expr), Value, VariablesIn) :-
+	evaluate_term(Term, T, VariablesIn),
+	evaluate_expr(Expr, V, VariablesIn),
+	Value is T - V.
+
+
+evaluate_term(term(Factor), Value, VariablesIn) :-
+	evaluate_factor(Factor, Value, VariablesIn).
+evaluate_term(term(Factor, mult_op, Term), Value, VariablesIn) :-
+	evaluate_factor(Factor, FVal, VariablesIn),
+	evaluate_term(Term, TVal, VariablesIn),
+	Value is FVal * TVal.
+evaluate_term(term(Factor, div_op, Term), Value, VariablesIn) :-
+	evaluate_factor(Factor, Numer, VariablesIn),
+	evaluate_term(Term, Denom, VariablesIn),
+	Value is Numer / Denom.
+
+evaluate_factor(factor(int(I)), I, _).
+evaluate_factor(factor(ident(I)), V, VariablesIn) :-
+	get_var_value(I, VariablesIn, V).
+evaluate_factor(factor(left_paren, Expr, right_paren), Value, VariablesIn) :-
+	evaluate_expr(Expr, Value, VariablesIn).
+
+get_var_value(VarName, [VarName = Value | _], Value).
+get_var_value(VarName, [_ | Rest], Result) :-
+	get_var_value(VarName, Rest, Result).
+get_var_value(_, [], 0).
+
+
+/*
+run('program2.txt','myparsetree2.txt').
+*/
