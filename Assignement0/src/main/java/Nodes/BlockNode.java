@@ -7,6 +7,7 @@ import tokenizer.Tokenizer;
 import tokenizer.TokenizerException;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public class BlockNode implements INode{
 
@@ -30,6 +31,8 @@ public class BlockNode implements INode{
 
     @Override
     public Object evaluate(Object[] args) throws Exception {
+        if (args == null)
+            args = new Object[]{new HashMap<String, Double>()};
         return statementsNode.evaluate(args);
     }
 

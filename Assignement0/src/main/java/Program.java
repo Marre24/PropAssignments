@@ -30,7 +30,7 @@ public class Program {
 				builder.append("PARSE TREE:\n");
 				root.buildString(builder, 0);
 				builder.append("\nEVALUATION:\n");
-				builder.append(root.evaluate(new Object[]{new HashMap<String, Double>()}));
+				builder.append(root.evaluate(null));
 				
 				stream = new FileOutputStream(outputFileName);
 				writer = new OutputStreamWriter(stream);
