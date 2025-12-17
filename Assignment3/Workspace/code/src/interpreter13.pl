@@ -1,3 +1,5 @@
+%Author: Maximilian Ellnestam mael0424
+
 :- [tokenizer].
 :- [filewriter].
 
@@ -45,28 +47,49 @@ evaluate_assign(assignment(ident(V), assign_op, Expr, semicolon), VariablesIn, V
 	evaluate_expr(Expr, Value, VariablesIn),
 	VariablesOut = [V = Value | VariablesIn].
 
-evaluate_expr(expression(Term), Value, VariablesIn) :-
-	evaluate_term(Term, Value, VariablesIn).
-evaluate_expr(expression(Term, add_op, Expr), Value, VariablesIn) :-
-	evaluate_term(Term, T, VariablesIn),
-	evaluate_expr(Expr, V, VariablesIn),
-	Value is T + V.
-evaluate_expr(expression(Term, sub_op, Expr), Value, VariablesIn) :-
-	evaluate_term(Term, T, VariablesIn),
-	evaluate_expr(Expr, V, VariablesIn),
-	Value is T - V.
+evaluate_expr(Expr, Value, Vars) :-
+    flatten_expr(Expr, Terms, Ops),
+    map_eval_terms(Vars, Terms, TermValues),
+    evaluate_values_left(TermValues, Ops, Value).
+
+flatten_expr(expression(Term), [Term], []).
+flatten_expr(expression(Term, add_op, Expr), [Term|Terms], [add_op|Ops]) :-
+    flatten_expr(Expr, Terms, Ops).
+flatten_expr(expression(Term, sub_op, Expr), [Term|Terms], [sub_op|Ops]) :-
+    flatten_expr(Expr, Terms, Ops).
+
+map_eval_terms(_, [], []).
+map_eval_terms(Vars, [Term|Terms], [Val|Vals]) :-
+    evaluate_term(Term, Val, Vars),
+    map_eval_terms(Vars, Terms, Vals).
+
+evaluate_term(Term, Value, Vars) :-
+    flatten_term(Term, Factors, Ops),
+    map_eval_factors(Vars, Factors, FactorValues),
+    evaluate_values_left(FactorValues, Ops, Value).
+
+flatten_term(term(Factor), [Factor], []).
+flatten_term(term(Factor, mult_op, Term), [Factor|Factors], [mult_op|Ops]) :-
+    flatten_term(Term, Factors, Ops).
+flatten_term(term(Factor, div_op, Term), [Factor|Factors], [div_op|Ops]) :-
+    flatten_term(Term, Factors, Ops).
+
+map_eval_factors(_, [], []).
+map_eval_factors(Vars, [Factor|Factors], [Val|Vals]) :-
+    evaluate_factor(Factor, Val, Vars),
+    map_eval_factors(Vars, Factors, Vals).
+
+evaluate_values_left([V], [], V).
+evaluate_values_left([A,B|Rest], [Op|Ops], Result) :-
+    apply_arith_op(Op, A, B, R),
+    evaluate_values_left([R|Rest], Ops, Result).
+
+apply_arith_op(add_op, A, B, R) :- R is A + B.
+apply_arith_op(sub_op, A, B, R) :- R is A - B.
+apply_arith_op(mult_op, A, B, R) :- R is A * B.
+apply_arith_op(div_op,  A, B, R) :- R is A / B.
 
 
-evaluate_term(term(Factor), Value, VariablesIn) :-
-	evaluate_factor(Factor, Value, VariablesIn).
-evaluate_term(term(Factor, mult_op, Term), Value, VariablesIn) :-
-	evaluate_factor(Factor, FVal, VariablesIn),
-	evaluate_term(Term, TVal, VariablesIn),
-	Value is FVal * TVal.
-evaluate_term(term(Factor, div_op, Term), Value, VariablesIn) :-
-	evaluate_factor(Factor, Numer, VariablesIn),
-	evaluate_term(Term, Denom, VariablesIn),
-	Value is Numer / Denom.
 
 evaluate_factor(factor(int(I)), I, _).
 evaluate_factor(factor(ident(I)), V, VariablesIn) :-
@@ -78,8 +101,3 @@ get_var_value(VarName, [VarName = Value | _], Value).
 get_var_value(VarName, [_ | Rest], Result) :-
 	get_var_value(VarName, Rest, Result).
 get_var_value(_, [], 0).
-
-
-/*
-run('program2.txt','myparsetree2.txt').
-*/
